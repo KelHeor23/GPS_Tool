@@ -43,6 +43,16 @@ Latitude &Latitude::operator=(const Latitude &aObj)
     return *this;
 }
 
+bool Latitude::operator==(const Latitude &aRhs) const
+{
+    return this->mPoint.degree == aRhs.mPoint.degree;
+}
+
+bool Latitude::operator!=(const Latitude &aRhs) const
+{
+    return this->mPoint.degree != aRhs.mPoint.degree;
+}
+
 
 //----------------Longitude------------------------------------------
 Longitude::Longitude(double degreeD)
@@ -81,6 +91,16 @@ Longitude &Longitude::operator=(const Longitude &aObj)
     this->mPoint.degree = aObj.mPoint.degree;
     this->mPoint.ch     = aObj.mPoint.ch;
     return *this;
+}
+
+bool Longitude::operator==(const Longitude &aRhs) const
+{
+    return this->mPoint.degree == aRhs.mPoint.degree;
+}
+
+bool Longitude::operator!=(const Longitude &aRhs) const
+{
+    return this->mPoint.degree != aRhs.mPoint.degree;
 }
 
 //----------------common------------------------------------------
