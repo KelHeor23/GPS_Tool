@@ -69,7 +69,7 @@ namespace Navigation
     struct Point2D
     {
         Point2D(double, double);
-        Point2D(Latitude, Longitude);
+        Point2D(const Latitude &, const Longitude &);
         Point2D(const Point2D &);
         Point2D &operator=(const Point2D &);
 
