@@ -1,41 +1,103 @@
 #include <iostream>
-#include <gps_tool.h>
+#include <iomanip>
+#include <fstream>
 
 using namespace std;
 
+#include "gps_tool.h"
+
+//------------------------------------------------------------------------------
+struct sPoint2DRead
+{
+    double altitude;
+    double longitude;
+    string description;
+};
+
+ifstream &operator >>(ifstream &aFile, sPoint2DRead &aObj)
+{
+    aFile >> aObj.longitude;
+    aFile.ignore(256, ',');
+    aFile >> aObj.altitude;
+    aFile.ignore(256, ' ');
+    return aFile;
+}
+
+void read_data()
+{
+    ifstream file;
+    file.open("d:\\tmp\\tracks.tr");
+
+    if(!file)
+        return;
+
+    sPoint2DRead point;
+
+    Navigation::TrackPoints2D track;
+
+    while(!file.eof())
+    {
+        point = sPoint2DRead{0.,0.,""};
+        file >> point;
+
+        if(file.good())
+            track.add(Navigation::Point2D{point.altitude, point.longitude});
+
+        if(file.fail())
+        {
+            file.clear();
+            break;
+        }
+
+        if(file.bad())
+        {
+            file.clear();
+            break;
+        }
+    }
+
+    file.close();
+}
+
+
+//--------эксперимент, удалить по необходимости----------------------------------------------------------------------
+double get_cin_double()
+{
+    double res = 0.0;
+
+    cin >> res;
+    if(cin.fail())
+    {
+        cin.clear();
+        bool isSkip = true;
+        char ch = '\0';
+        for(;isSkip;)
+        {
+            cin >> ch;
+            if(isdigit(ch))
+            {
+                cin.unget();
+                isSkip = false;
+                break;
+            }
+            switch (ch)
+            {
+            case '-':
+            case '+':
+            case '.':
+                cin.unget();
+                isSkip = false;
+                break;
+            }
+        }
+        cin >> res;
+    }
+    return res;
+}
+
 int main()
 {
-    /*Navigation::Latitude lat(10.9988);
-    Navigation::Longitude lon(-25.9988);
+    read_data();
 
-    cout << lat.point().degree << lat.point().ch << '\n';
-    cout << lon.point().degree << lon.point().ch << '\n';*/
-
-    Navigation::Point2D p1(55.814048, 37.359538);
-    Navigation::Point2D p2(55.823586, 37.375473);
-    Navigation::Point2D p3(55.826773, 37.368652);
-    Navigation::Point2D p4(55.823627, 37.376267);
-
-
-    cout << p1.azimuteTo(p2) << endl;
-    cout << p1.distanceTo(p2) << endl;
-
-    cout << p2.azimuteTo(p4) << endl;
-    cout << p2.distanceTo(p4) << endl;
-
-    //cout << Navigation::common::courseAzimuth(p1, p2, p4) << endl;
-
-    /*55.814048
-    37.359538
-
-    55.823586,
-    37.375473
-
-    55.826773,
-    37.368652
-
-    55.823627,
-37.376267
-    */
     return 0;
 }
